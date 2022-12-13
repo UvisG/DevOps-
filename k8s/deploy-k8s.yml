@@ -1,7 +1,0 @@
----
-- name: Install k8s
-  import_playbook: install-k8s.yml
-- name: Create k8s master
-  import_playbook: master.yml
-- name: Join worker nodes
-  import_playbook: join-workers.yml
