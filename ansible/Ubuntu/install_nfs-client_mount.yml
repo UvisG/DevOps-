@@ -30,4 +30,5 @@
         path: "{{ mountpoint }}"
         fstype: nfs
         opts: "{{ myopts }}"
-        state: mounted
+
+        
