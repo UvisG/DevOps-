@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: 'masters, workers'
   remote_user: uvis
   become: yes
   become_method: sudo
@@ -8,18 +8,18 @@
   connection: ssh
 
   tasks:
-     - name: uninstall docker and containerd
-       become: yes
-       shell: |
-               sudo systemctl stop docker.socket
-               sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin
-               sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin
-               sudo rm -rf /var/lib/docker /etc/docker
-               sudo rm /etc/apparmor.d/docker
-               sudo groupdel docker
-               sudo rm -rf /var/run/docker.sock
-               sudo systemctl stop containerd.service
-               sudo apt purge containerd.io -y
+  #   - name: uninstall docker and containerd
+  #     become: yes
+  #     shell: |
+  #             sudo systemctl stop docker.socket
+  #             sudo apt-get purge -y docker-engine docker docker.io docker-ce docker-ce-cli docker-compose-plugin
+  #             sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce docker-compose-plugin
+  #             sudo rm -rf /var/lib/docker /etc/docker
+  #             sudo rm /etc/apparmor.d/docker
+  #             sudo groupdel docker
+  #             sudo rm -rf /var/run/docker.sock
+  #             sudo systemctl stop containerd.service
+  #             sudo apt purge containerd.io -y
 
      - name: disable swap
        shell: |

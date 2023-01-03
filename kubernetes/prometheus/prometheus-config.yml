@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    # my global config
+    global:
+      scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+      evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+      # scrape_timeout is set to the global default (10s).
+    # Alertmanager configuration
+    alerting:
+      alertmanagers:
+      - static_configs:
+        - targets:
+          # - alertmanager:9093
+    # Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+    rule_files:
+      # - "first_rules.yml"
+      # - "second_rules.yml"
+    # A scrape configuration containing exactly one endpoint to scrape:
+    # Here it's Prometheus itself.
+     scrape_configs:
+     - job_name: prometheus
+       kubernetes_sd_configs:
+       - role: pod
+       relabel_configs:
+       
+       # Constrain service discovery to one specific Prometheus 
+       #  workload running one or more pods
+       - action: keep
+         source_labels: [__meta_kubernetes_pod_name]
+         # Replace match string with your deployment's name
+         regex: ^p8s-prometheus-server.+$
+         replacement: $1
+     
+       # Swap "instance" label with the cluster node's IP address
+       - action: replace
+         source_labels: [__meta_kubernetes_pod_host_ip]
+         regex: (.*)
+         target_label: instance
+         replacement: $1
+     
+       # Don't want to lose any extra flavor from custom K8s labels
+       - action: labelmap
+         source_labels: []
+         regex: __meta_kubernetes_pod_label_(.+)
+         replacement: $1
+        
+       # Particularly helpful to have a pod_name label in K8s HA configs
+       - action: replace
+         source_labels: [__meta_kubernetes_pod_name]
+         regex: (.*)
+         target_label: kubernetes_pod_name
+         replacement: $1

@@ -1,0 +1,4 @@
+kubectl create deployment httpd --image=httpd --port=80
+kubectl expose deployment httpd
+kubectl create ingress httpd --class=nginx \
+  --rule httpd.example.com/*=httpd:80

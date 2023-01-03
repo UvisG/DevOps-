@@ -1,0 +1,22 @@
+Step 1: Installation of MetalLB
+To practice the installation of MetalLB on your local environment, the following manifests must be deployed on the control-plane:
+
+namespace.yaml creates a MetalLB namespace;
+metallb.yaml deploys the MetalLB controller and speakers, as well as the role bindings and listeners that are needed.
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.12.1/manifests/metallb.yaml
+Once MetalLB is installed, we must configure an IP address pool. By deploying it, the controller allocates IP addresses for the load-balancer. The IP address pool allows for one or many IP addresses, depending on what we need. The allocated addresses must be part of the host network of our cluster and unique.
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - {ip-start}-{ip-stop}
+Save this file under the name config-pool.yaml and simply apply it using kubectl apply -f config-pool.yaml.
